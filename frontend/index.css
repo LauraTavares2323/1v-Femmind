@@ -1,0 +1,17 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+header {
+    background-color: #657959;
+
+}
+
+footer {
+    background-color: #657959;
+}
+
+.navbar-brand img{
+    width: 15%;
+}
