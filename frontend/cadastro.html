@@ -4,19 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Femmind - Cadastre-se</title>
-    <script src="cadastro.js" defer></script>
+    <link rel="stylesheet" href="cadastro.css">
 </head>
+
 <body>
-    <header></header>
-    <main>
-        <section class="cadastro">
-          <form class="product-form" id="cadastro">
-            <input type="text" id="user" placeholder="usuário" required>
-            <input type="password" id="password" placeholder="senha" required>
-            <button id="cadastro" type="submit" class="submit">Cadastre-se</button>
-            <p class="Conta">Já tem uma conta? <a href="Login.html">entrar</a></p>
-          </form>
-        </section>
-    </main>
+    <header>
+        <img src="./assents/FEMMIND-removebg-preview.png" alt="Logo" class="logo">
+        <nav class="nav-links">
+          <a href="#">Início</a>
+          <a href="#">Proposta</a>
+          <a href="#">Pesquisar</a>
+        </nav>
+      <a href="login.html"><button class="button">Login</button></a> 
+      </header>
+
+      <main>
+        <div class="container">
+            <form class="login-form">
+                <h2>Cadastro</h2>
+                <div class="input-group">
+                    <label for="email">Nome </label>
+                    <input type="email" id="email" placeholder="Digite seu nome"  required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Email</label>
+                    <input type="password" id="password" placeholder="Digite seu email " required>
+                </div>
+                <div class="input-group">
+                  <label for="password">Senha</label>
+                  <input type="password" id="password" placeholder="Digite sua senha" required>
+              </div>
+
+              <div class="input-group">
+                <label for="password">Reescreva</label>
+                <input type="password" id="password" placeholder="reescreva sua senha " required>
+            </div>
+                <button type="submit">Entrar</button>
+            </form>
+
+            <p>Já tem uma conta?  <a href="login.html ">Logar  </a></p>
+        </div>
+      </main>
 </body>
 </html>
