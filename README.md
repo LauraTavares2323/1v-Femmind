@@ -1,1 +1,2 @@
-# 1v-Femmind
+O nome do meu projeto é Femmind, O objetivo dele é desenvolver uma plataforma com a intenção de proporcionar as mulheres uma chance de crescimento profissional por meio de publicações e divulgação digital com um enfoque em estudos femininos na área de humanas.
+As tecnologias utilizadas foram html, css e javaScript. As funções já implementadas são o cadastro e o login por enquanto mas depois ainda vão ser adicionadas funções para publicar artigos, comentar entre outros.
