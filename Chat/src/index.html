@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Femmind - Chat</title>
+</head>
+<!-- Sor, espero que tu leia isso antes mas eu tentei fazer o chat usando websockets q nem tu me disse pra fazer sabe? ai eu pesquisei alguns videos mas todos eram em 
+ React e eu escolhi fazer meu pp em java script vanilla pq eu sei mais e queria deixar ele bem boniyinho, e eu achei só dois videos em vanila e nao ta funcionando perfeitamente
+ Eu fiz ele separado do projeto inteiro e ele ta bem simples e sem css mas vou enviar assim pq acho q n vai dar tempi de deixar ele funcional e com css até a entrega e eu 
+ ainda to tentando entender como vou fazer pra ele funcionar com por exemplo o chat d cada usuário com outro usuário e como que faço pra ele ter o chat de cada usuário, 
+ acho que eu preciso de um banco de dados pra amarzenar as mensagens mas ainda to achando isso muito confuso mas acho que na proxima entrega ja vai estar tudo mais encaminhado -->
+<body>
+        <ul id="messages">
+            <li>Texto</li>
+        </ul>
+        <form id="form" action="">
+            <input id="input" autocomplete="off"/><button>Enviar</button>
+        </form>
+
+        <script src="socket.io/socket.io.js"></script>
+        <script>
+            var socket = io()
+            const message = document.getElementById('messages')
+            const input = document.getElementById('input')
+
+            document.addEventListener('submit', (e)=>{
+                e.preventDefault()
+                if(input.value){
+                    socket.emit('message', input.value);
+                    input.value = '';
+                }
+            })
+
+            
+            socket.on('message', (msg)=>{
+               const li = document.createElement('li')
+               li.textContent = msg
+               message.appendChild(li)
+            })
+        </script>
+</body>
+</html>
