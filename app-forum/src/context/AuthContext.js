@@ -1,57 +1,66 @@
-// src/context/AuthContext.js
-
 import React, { createContext, useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Para persistir o token
-
-// Instalar AsyncStorage:
-// npx expo install @react-native-async-storage/async-storage
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [userToken, setUserToken] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // Para carregar o token ao iniciar
+  const [userData, setUserData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Função para salvar o token e o usuário (se necessário)
-  const signIn = async (token, userData) => {
+  const signIn = async (token, userDataObj) => {
     console.log('AuthContext: iniciando signIn() com token:', token);
+
     try {
       await AsyncStorage.setItem('userToken', token);
-      await AsyncStorage.setItem('userData', JSON.stringify(userData));
+      await AsyncStorage.setItem('userData', JSON.stringify(userDataObj));
+
       setUserToken(token);
-      console.log('AuthContext: userToken definido para:', token);
-    } catch (e) {
-      console.error('Erro ao salvar token/dados no AsyncStorage', e);
+      setUserData(userDataObj);
+
+      console.log('AuthContext: login realizado e dados salvos.');
+    } catch (error) {
+      console.error('Erro ao salvar token/dados no AsyncStorage:', error);
     }
   };
 
-  // Função para remover o token ao fazer logout
   const signOut = async () => {
+    console.log('AuthContext: iniciando signOut(). Removendo dados...');
+
     try {
-      console.log('AuthContext: Iniciando signOut(). Tentando remover userToken.'); // <-- Adicione este log
       await AsyncStorage.removeItem('userToken');
-      await AsyncStorage.removeItem('userData')
+      await AsyncStorage.removeItem('userData');
+
       setUserToken(null);
-      console.log('AuthContext: userToken definido para null e AsyncStorage limpo.'); // <-- Adicione este log
-    } catch (e) {
-      console.error('AuthContext: Erro ao remover token do AsyncStorage:', e); // <-- MUITO IMPORTANTE
+      setUserData(null);
+
+      console.log('AuthContext: Logout concluído. userToken = null, userData = null.');
+    } catch (error) {
+      console.error('AuthContext: Erro ao fazer logout:', error);
     }
   };
-  // Carregar o token ao iniciar o aplicativo
+
   useEffect(() => {
     const loadToken = async () => {
       console.log('AuthContext: carregando token do AsyncStorage...');
+
       try {
         const token = await AsyncStorage.getItem('userToken');
+        const userDataJson = await AsyncStorage.getItem('userData');
+
         if (token) {
           setUserToken(token);
-          console.log('AuthContext: token carregado do AsyncStorage:', token);
+          console.log('AuthContext: token encontrado:', token);
+        } else {
+          console.log('AuthContext: nenhum token encontrado.');
         }
-        else {
-          console.log('AuthContext: nenhum token encontrado no AsyncStorage');
+
+        if (userDataJson) {
+          setUserData(JSON.parse(userDataJson));
         }
-      } catch (e) {
-        console.error('Erro ao carregar token do AsyncStorage', e);
+
+      } catch (error) {
+        console.error('Erro ao carregar token:', error);
       } finally {
         setIsLoading(false);
       }
@@ -61,7 +70,15 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ userToken, isLoading, signIn, signOut }}>
+    <AuthContext.Provider
+      value={{
+        userToken,
+        userData,
+        isLoading,
+        signIn,
+        signOut,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

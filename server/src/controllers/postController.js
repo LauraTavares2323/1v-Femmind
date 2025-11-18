@@ -1,6 +1,5 @@
 const pool = require('../../db');
 
-// Obter todos os posts
 exports.getAllPosts = async (req, res) => {
   try {
     const [rows] = await pool.query(`
@@ -20,11 +19,9 @@ exports.getAllPosts = async (req, res) => {
   }
 };
 
-// Criar um novo post
 exports.createPost = async (req, res) => {
   const { title, content, image_url } = req.body;
-  const userId = req.user.id; // Vem do middleware de autenticação (que vamos criar)
-
+  const userId = req.user.id; 
   if (!title || !content || !userId) {
     return res.status(400).json({ message: 'Título e conteúdo são obrigatórios.' });
   }
@@ -41,7 +38,6 @@ exports.createPost = async (req, res) => {
   }
 };
 
-// Obter um único post por ID
 exports.getPostById = async (req, res) => {
   const { id } = req.params;
   try {
@@ -68,17 +64,17 @@ exports.getPostById = async (req, res) => {
 
 exports.toggleLike = async (req, res) => {
   const { postId } = req.params;
-  const userId = req.user.id; // ID do usuário autenticado
+  const userId = req.user.id;
 
   try {
-    // Verifica se o usuário já curtiu este post
+   
     const [existingLike] = await pool.query(
       'SELECT id FROM likes WHERE post_id = ? AND user_id = ?',
       [postId, userId]
     );
 
     if (existingLike.length > 0) {
-      // Se já curtiu, descurte (remove o like)
+    
       await pool.query('DELETE FROM likes WHERE id = ?', [existingLike[0].id]);
       res.status(200).json({ message: 'Like removido com sucesso.', liked: false });
     } else {
@@ -92,24 +88,21 @@ exports.toggleLike = async (req, res) => {
   }
 };
 
-// Função para favoritar/desfavoritar um post
+
 exports.toggleFavorite = async (req, res) => {
   const { postId } = req.params;
-  const userId = req.user.id; // ID do usuário autenticado
+  const userId = req.user.id; 
 
   try {
-    // Verifica se o usuário já favoritou este post
     const [existingFavorite] = await pool.query(
       'SELECT id FROM favorites WHERE post_id = ? AND user_id = ?',
       [postId, userId]
     );
 
     if (existingFavorite.length > 0) {
-      // Se já favoritou, desfavorita (remove o favorito)
       await pool.query('DELETE FROM favorites WHERE id = ?', [existingFavorite[0].id]);
       res.status(200).json({ message: 'Favorito removido com sucesso.', favorited: false });
     } else {
-      // Se não favoritou, favorita (adiciona o favorito)
       await pool.query('INSERT INTO favorites (post_id, user_id) VALUES (?, ?)', [postId, userId]);
       res.status(201).json({ message: 'Post adicionado aos favoritos.', favorited: true });
     }
@@ -119,9 +112,8 @@ exports.toggleFavorite = async (req, res) => {
   }
 };
 
-// Função para buscar posts (com ou sem termo de pesquisa)
 exports.searchPosts = async (req, res) => {
-  const { q } = req.query; // Termo de pesquisa da URL (ex: ?q=termo)
+  const { q } = req.query; 
   let query = `
     SELECT
         p.id, p.title, p.content, p.image_url, p.created_at, p.updated_at,
@@ -134,7 +126,6 @@ exports.searchPosts = async (req, res) => {
   let params = [];
 
   if (q) {
-    // Adiciona condição de busca pelo título ou conteúdo
     query += ` WHERE p.title LIKE ? OR p.content LIKE ?`;
     params.push(`%${q}%`, `%${q}%`);
   }

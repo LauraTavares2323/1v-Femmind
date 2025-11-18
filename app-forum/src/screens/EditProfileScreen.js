@@ -1,10 +1,8 @@
-// src/screens/EditProfileScreen.js
-
 import React, { useState, useContext, useEffect } from 'react';
 import {
   View, Text, TextInput, Button, StyleSheet, Alert,
   ScrollView, ActivityIndicator, Image, TouchableOpacity,
-  Platform // <-- Adicionar Platform aqui
+  Platform 
 } from 'react-native';
 import AuthContext from '../context/AuthContext';
 import api from '../services/api';
@@ -27,7 +25,7 @@ const EditProfileScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     (async () => {
-      if (Platform.OS !== 'web') { // Permissões são necessárias apenas para apps nativos
+      if (Platform.OS !== 'web') { 
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
           Alert.alert('Permissão Negada', 'Desculpe, precisamos de permissões de galeria para isso funcionar!');
@@ -67,22 +65,19 @@ const EditProfileScreen = ({ route, navigation }) => {
 
       let finalProfilePictureUrl = profilePictureUrl;
       if (selectedImageUri) {
-        // Se uma nova imagem foi selecionada, faça o upload primeiro
         const formData = new FormData();
         const imageBlob = await fetch(selectedImageUri).then(res => res.blob());
-        const filename = `profile_picture_${initialUser.id}_${Date.now()}.jpeg` // Extrai o nome do arquivo da URI
-        const match = /\.(\w+)$/.exec(filename); // Pega a extensão
-        const type = match ? `image/${match[1]}` : 'image'; // Tenta inferir o tipo MIME
+        const filename = `profile_picture_${initialUser.id}_${Date.now()}.jpeg` 
+        const match = /\.(\w+)$/.exec(filename); 
+        const type = match ? `image/${match[1]}` : 'image';
 
-        // Correção aqui:
-        // Use o Platform.OS para adaptar o URI e o nome do arquivo para web e nativo
         const imageFile = {
             uri: Platform.OS === 'android' ? selectedImageUri : selectedImageUri.replace('file://', ''),
-            name: Platform.OS === 'android' ? filename : `${initialUser.id}_${Date.now()}.${match ? match[1] : 'jpg'}`, // Garante nome de arquivo para web/iOS
+            name: Platform.OS === 'android' ? filename : `${initialUser.id}_${Date.now()}.${match ? match[1] : 'jpg'}`, 
             type: type,
         };
 
-        formData.append('profilePicture', imageBlob, filename); // 'profilePicture' deve corresponder ao nome do campo no Multer
+        formData.append('profilePicture', imageBlob, filename); 
 
         try {
           const uploadResponse = await api.post('/upload/profile-picture', formData, {
@@ -115,7 +110,7 @@ const EditProfileScreen = ({ route, navigation }) => {
         Object.entries(updateData).filter(([, value]) => value !== undefined)
       );
 
-      if (Object.keys(filteredUpdateData).length === 0 && !selectedImageUri) { // Adicionado !selectedImageUri
+      if (Object.keys(filteredUpdateData).length === 0 && !selectedImageUri) {
         Alert.alert('Aviso', 'Nenhuma alteração detectada para salvar.');
         setIsSubmitting(false);
         return;
@@ -214,103 +209,116 @@ const EditProfileScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f4f6f3', // fundo levemente esverdeado
+    backgroundColor: '#f3f6f1', 
+    paddingBottom: 20,
   },
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e5dd',
-    paddingTop: 40,
-
-    // sombra para o header em verde musgo
-    shadowColor: '#556b2f',
-    shadowOffset: { width: 0, height: 2 },
+    paddingHorizontal: 18,
+    paddingVertical: 14,
+    backgroundColor: '#657959', 
+    paddingTop: Platform.OS === 'ios' ? 56 : 44,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 4,
+    shadowRadius: 6,
+    elevation: 6,
   },
-  backButton: {
-    padding: 5,
-  },
+
   headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#3b5323', // verde musgo mais escuro
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#fff', 
   },
+
+  backButton: {
+    padding: 8,
+    borderRadius: 10,
+  },
+
   scrollViewContent: {
-    padding: 20,
+    padding: 18,
     alignItems: 'center',
   },
+
   profilePictureContainer: {
     alignItems: 'center',
-    marginBottom: 25,
+    marginBottom: 20,
   },
-  profilePicture: {
-    width: 130,
-    height: 130,
-    borderRadius: 65,
-    borderWidth: 3,
-    borderColor: '#6b8e23',
 
-    // sombra circular na foto
-    shadowColor: '#556b2f',
+  profilePicture: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    borderWidth: 3,
+    borderColor: '#657959',
+    backgroundColor: '#fff',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 6,
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
   },
+
   profilePicturePlaceholder: {
-    width: 130,
-    height: 130,
-    borderRadius: 65,
-    backgroundColor: '#dce5d1',
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: '#e5e8e0',
     justifyContent: 'center',
     alignItems: 'center',
+  },
 
-    shadowColor: '#556b2f',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 6,
-  },
   changePhotoText: {
-    marginTop: 10,
-    color: '#3b5323',
+    marginTop: 12,
+    color: '#657959',
+    fontWeight: '600',
     textDecorationLine: 'underline',
-    fontWeight: '500',
   },
+
   input: {
     width: '100%',
-    padding: 15,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: '#c2c8b7',
+    borderColor: '#d9dfd2',
     borderRadius: 12,
-    marginBottom: 15,
+    marginBottom: 14,
     backgroundColor: '#fff',
     fontSize: 16,
-
-    // sombra leve nos inputs
-    shadowColor: '#556b2f',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
   },
+
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#3b5323',
-    marginTop: 20,
-    marginBottom: 12,
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#657959',
+    marginTop: 6,
+    marginBottom: 10,
     alignSelf: 'flex-start',
-    width: '100%',
+  },
+
+  primaryButton: {
+    backgroundColor: '#657959',
+    paddingVertical: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    marginTop: 10,
+  },
+
+  primaryButtonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
   },
 });
+
+
+
+
 
 
 export default EditProfileScreen;

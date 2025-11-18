@@ -1,5 +1,3 @@
-// src/screens/HomeScreen.js
-
 import React, { useState, useEffect, useContext } from 'react';
 import {
   View, Text, Button, StyleSheet, Alert,
@@ -24,7 +22,7 @@ const HomeScreen = ({ navigation }) => {
   const [userFavorites, setUserFavorites] = useState({})
   const [currentUserId, setCurrentUserId] = useState(null);
   const [currentUsername, setCurrentUsername] = useState(null);
-  const [newPostImageUri, setNewPostImageUri] = useState(null); // <-- Novo: URI da imagem do novo post
+  const [newPostImageUri, setNewPostImageUri] = useState(null); 
 
   useEffect(() => {
     const loadUserId = async () => {
@@ -42,7 +40,7 @@ const HomeScreen = ({ navigation }) => {
     loadUserId();
     fetchPosts();
 
-    // Pedir permissão para acessar a galeria de imagens
+   
     (async () => {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
@@ -94,7 +92,7 @@ const HomeScreen = ({ navigation }) => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3], // Ajuste conforme preferir
+      aspect: [4, 3],
       quality: 0.8,
     });
 
@@ -120,7 +118,6 @@ const HomeScreen = ({ navigation }) => {
 
       let imageUrlToSave = null;
       if (newPostImageUri) {
-        // Faça o upload da imagem do post primeiro
         const formData = new FormData();
         formData.append('postImage', {
           uri: newPostImageUri,
@@ -131,11 +128,11 @@ const HomeScreen = ({ navigation }) => {
         try {
           const uploadResponse = await api.post('/upload/post-image', formData, {
             headers: {
-              'Content-Type': 'multipart/form-data',
               'Authorization': `Bearer ${userToken}`,
             },
+
           });
-          imageUrlToSave = uploadResponse.data.imageUrl; // URL retornada pelo backend
+          imageUrlToSave = uploadResponse.data.imageUrl;
         } catch (uploadError) {
           console.error('Erro ao fazer upload da imagem do post:', uploadError.response?.data || uploadError.message);
           Alert.alert('Erro de Upload', 'Não foi possível fazer upload da imagem do post.');
@@ -146,15 +143,15 @@ const HomeScreen = ({ navigation }) => {
 
       await api.post(
         '/posts',
-        { title: newPostTitle, content: newPostContent, image_url: imageUrlToSave }, // Envia a URL da imagem
+        { title: newPostTitle, content: newPostContent, image_url: imageUrlToSave }, 
         { headers: { Authorization: `Bearer ${userToken}` } }
       );
 
       Alert.alert('Sucesso', 'Post criado com sucesso!');
       setNewPostTitle('');
       setNewPostContent('');
-      setNewPostImageUri(null); // Limpa a imagem selecionada
-      fetchPosts(); // Recarrega os posts
+      setNewPostImageUri(null);
+      fetchPosts(); 
     } catch (error) {
       console.error('Erro ao criar post:', error.response?.data || error.message);
       Alert.alert('Erro ao Criar Post', error.response?.data?.message || 'Ocorreu um erro ao criar o post.');
@@ -430,7 +427,9 @@ const HomeScreen = ({ navigation }) => {
     </View>
   );
 
-}; const styles = StyleSheet.create({
+}; 
+
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f2f5ee',
@@ -711,7 +710,7 @@ const HomeScreen = ({ navigation }) => {
     paddingTop: 18,
     borderTopWidth: 1,
     borderTopColor: '#dfe6d8',
-    gap: 14, // aproxima os botões
+    gap: 14, 
   },
 
 

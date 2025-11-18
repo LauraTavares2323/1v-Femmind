@@ -1,6 +1,5 @@
 const pool = require('../../db');
 
-// Obter comentários de um post específico
 exports.getCommentsByPostId = async (req, res) => {
   const { postId } = req.params;
   try {
@@ -20,11 +19,10 @@ exports.getCommentsByPostId = async (req, res) => {
   }
 };
 
-// Criar um novo comentário em um post
 exports.createComment = async (req, res) => {
   const { postId } = req.params;
   const { content } = req.body;
-  const userId = req.user.id; // ID do usuário autenticado
+  const userId = req.user.id; 
 
   if (!content) {
     return res.status(400).json({ message: 'O conteúdo do comentário não pode ser vazio.' });

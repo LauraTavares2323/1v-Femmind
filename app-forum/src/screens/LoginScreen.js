@@ -31,15 +31,15 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.page}>
-      {/* Barra superior */}
+   
       <View style={styles.header}>
         <Text style={styles.logo}>FEM<Text style={styles.logoBold}>MIND</Text></Text>
         
       </View>
 
-      {/* Fundo degradê */}
+
       <View style={styles.container}>
-        {/* Card de login */}
+       
         <View style={styles.card}>
           <Text style={styles.label}>Email</Text>
           <TextInput
@@ -84,7 +84,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f6f5ef',
   },
 
-  /*** HEADER ***/
   header: {
     backgroundColor: '#556b2f',
     flexDirection: 'row',
@@ -121,7 +120,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
 
-  /*** CONTAINER ***/
+
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -129,11 +128,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
 
-  /*** CARD ***/
   card: {
     backgroundColor: '#fff',
     width: '90%',
-    maxWidth: 480, // 🔹 aumentamos o tamanho do formulário
+    maxWidth: 480, 
     borderRadius: 14,
     paddingVertical: 36,
     paddingHorizontal: 28,
@@ -157,7 +155,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  /*** INPUTS ***/
   label: {
     fontSize: 15,
     color: '#444',
@@ -178,7 +175,6 @@ const styles = StyleSheet.create({
     color: '#333',
   },
 
-  /*** BUTTON ***/
   button: {
     backgroundColor: '#4b5320',
     borderRadius: 10,
@@ -193,7 +189,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  /*** LINKS ***/
   link: {
     marginTop: 16,
     color: '#2b2b2b',

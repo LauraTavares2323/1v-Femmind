@@ -19,7 +19,7 @@ const PostDetailScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     fetchPostAndComments();
-  }, [postId]); // Adicionado postId como dependência para recarregar se o post mudar (ex: navegação entre posts)
+  }, [postId]);
 
   const fetchPostAndComments = async () => {
     setLoading(true);
@@ -67,7 +67,7 @@ const PostDetailScreen = ({ route, navigation }) => {
       console.error('Erro ao criar comentário:', error.response?.data || error.message);
       Alert.alert('Erro ao Comentar', error.response?.data?.message || 'Ocorreu um erro ao adicionar o comentário.');
       if (error.response?.status === 401 || error.response?.status === 403) {
-         signOut();
+        signOut();
       }
     } finally {
       setIsSubmittingComment(false);
@@ -119,50 +119,64 @@ const PostDetailScreen = ({ route, navigation }) => {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        {/* Detalhes do Post */}
-        <View style={styles.postDetailCard}>
-          <View style={styles.postHeader}>
-            {post.profile_picture_url ? (
-              <Image source={{ uri: `http://localhost:3001${post.profile_picture_url}` }} style={styles.profilePicture} />
-            ) : (
-              <Ionicons name="person-circle" size={40} color="#ccc" style={styles.profilePicturePlaceholder} />
-            )}
-            <Text style={styles.postUsername}>{post.username}</Text>
+
+    
+        <View style={styles.mainContentContainer}>
+
+          <View style={styles.leftColumn}>
+            <Text style={styles.commentsTitle}>Comentários</Text>
+
+            <FlatList
+              data={comments}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={renderCommentItem}
+              scrollEnabled={false}
+              ListEmptyComponent={<Text style={styles.noCommentsText}>Nenhum comentário ainda. Seja o primeiro!</Text>}
+            />
+
+            <View style={styles.addCommentContainer}>
+              <TextInput
+                style={styles.commentInput}
+                placeholder="Adicione um comentário..."
+                value={newCommentContent}
+                onChangeText={setNewCommentContent}
+                multiline
+              />
+              <Button
+                title={isSubmittingComment ? "Enviando..." : "Comentar"}
+                onPress={handleCreateComment}
+                disabled={isSubmittingComment}
+                color="#4a5e39" 
+              />
+
+            </View>
           </View>
-          <Text style={styles.postTitle}>{post.title}</Text>
-          <Text style={styles.postContent}>{post.content}</Text>
-          {post.image_url && <Image source={{ uri: `http://localhost:3001${post.image_url}` }} style={styles.postImage} />}
-          <View style={styles.postStatsContainer}>
-            <Text style={styles.postStats}>{post.likes_count} Curtidas</Text>
-            <Text style={styles.postStats}>{post.comments_count} Comentários</Text>
+
+         
+          <View style={styles.rightColumn}>
+            <View style={styles.postDetailCard}>
+              <View style={styles.postHeader}>
+                {post.profile_picture_url ? (
+                  <Image source={{ uri: `http://localhost:3001${post.profile_picture_url}` }} style={styles.profilePicture} />
+                ) : (
+                  <Ionicons name="person-circle" size={40} color="#ccc" style={styles.profilePicturePlaceholder} />
+                )}
+                <Text style={styles.postUsername}>{post.username}</Text>
+              </View>
+              <Text style={styles.postTitle}>{post.title}</Text>
+              <Text style={styles.postContent}>{post.content}</Text>
+              {post.image_url && (
+                <Image source={{ uri: `http://localhost:3001${post.image_url}` }} style={styles.postImage} />
+              )}
+              <View style={styles.postStatsContainer}>
+                <Text style={styles.postStats}>{post.likes_count} Curtidas</Text>
+                <Text style={styles.postStats}>{post.comments_count} Comentários</Text>
+              </View>
+            </View>
           </View>
+
         </View>
 
-        {/* Seção de Comentários */}
-        <Text style={styles.commentsTitle}>Comentários</Text>
-        <FlatList
-          data={comments}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderCommentItem}
-          scrollEnabled={false}
-          ListEmptyComponent={<Text style={styles.noCommentsText}>Nenhum comentário ainda. Seja o primeiro!</Text>}
-        />
-
-        {/* Campo para Adicionar Comentário */}
-        <View style={styles.addCommentContainer}>
-          <TextInput
-            style={styles.commentInput}
-            placeholder="Adicione um comentário..."
-            value={newCommentContent}
-            onChangeText={setNewCommentContent}
-            multiline
-          />
-          <Button
-            title={isSubmittingComment ? "Enviando..." : "Comentar"}
-            onPress={handleCreateComment}
-            disabled={isSubmittingComment}
-          />
-        </View>
       </ScrollView>
     </View>
   );
@@ -172,8 +186,24 @@ const PostDetailScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f7f2', // fundo verde bem suave
+    backgroundColor: '#eef1e6',
   },
+
+
+  mainContentContainer: {
+    flexDirection: 'row',
+    width: '100%',
+    paddingHorizontal: 14,
+    paddingBottom: 40,
+    gap: 14,
+  },
+  leftColumn: {
+    flex: 1,
+  },
+  rightColumn: {
+    flex: 1,
+  },
+
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -183,171 +213,180 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 15,
-    paddingVertical: 12,
-    backgroundColor: '#556b2f', // verde musgo forte
-    borderBottomWidth: 1,
-    borderBottomColor: '#cbd5b1',
-    paddingTop: 40, // SafeArea iOS
-
-    shadowColor: '#556b2f',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
+    paddingHorizontal: 18,
+    paddingVertical: 18,
+    backgroundColor: '#4a5e39',
+    borderBottomWidth: 0,
+    paddingTop: 42,
+    shadowColor: '#4a5e39',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 6,
   },
   backButton: {
-    padding: 5,
+    padding: 6,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#ffffff',
+    letterSpacing: 0.5,
   },
   scrollViewContent: {
-    paddingBottom: 20,
+    paddingBottom: 25,
   },
-  postDetailCard: {
-    backgroundColor: '#fff',
-    padding: 18,
-    borderRadius: 12,
-    margin: 15,
 
-    shadowColor: '#556b2f',
-    shadowOffset: { width: 0, height: 3 },
+
+  postDetailCard: {
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 18,
+    marginTop: 18,
+    shadowColor: '#2f3b24',
+    shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.15,
-    shadowRadius: 5,
-    elevation: 4,
+    shadowRadius: 10,
+    elevation: 7,
   },
   postHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 15,
   },
   profilePicture: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    marginRight: 10,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    marginRight: 12,
     borderWidth: 2,
-    borderColor: '#6b8e23',
+    borderColor: '#7c9164',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   profilePicturePlaceholder: {
-    marginRight: 10,
+    marginRight: 12,
   },
   postUsername: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    color: '#3b5323',
+    fontWeight: '700',
+    fontSize: 17,
+    color: '#2f3b24',
   },
   postTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#2e4600',
+    fontSize: 22,
+    fontWeight: '700',
+    marginBottom: 10,
+    color: '#1f2b12',
+    letterSpacing: 0.3,
   },
   postContent: {
     fontSize: 16,
-    lineHeight: 24,
-    color: '#444',
-    marginBottom: 10,
+    lineHeight: 26,
+    color: '#3f3f3f',
+    marginBottom: 12,
   },
   postImage: {
     width: '100%',
-    height: 250,
-    borderRadius: 10,
-    marginTop: 10,
+    height: 260,
+    borderRadius: 14,
+    marginTop: 12,
     resizeMode: 'cover',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
   },
   postStatsContainer: {
     flexDirection: 'row',
-    marginTop: 12,
+    marginTop: 16,
     borderTopWidth: 1,
-    borderTopColor: '#d5dbc7',
-    paddingTop: 10,
-    justifyContent: 'space-around',
+    borderTopColor: '#d9e0cf',
+    paddingTop: 12,
+    justifyContent: 'space-between',
   },
   postStats: {
-    fontSize: 14,
-    color: '#3b5323',
+    fontSize: 15,
+    color: '#2f3b24',
+    fontWeight: '500',
   },
+
   commentsTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginHorizontal: 15,
-    marginTop: 12,
-    marginBottom: 10,
-    color: '#556b2f',
+    fontSize: 21,
+    fontWeight: '700',
+    marginTop: 18,
+    marginBottom: 12,
+    color: '#4a5e39',
+    letterSpacing: 0.3,
   },
   commentCard: {
-    backgroundColor: '#fff',
-    padding: 12,
-    borderRadius: 10,
-    marginHorizontal: 15,
-    marginBottom: 10,
-
-    shadowColor: '#556b2f',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    backgroundColor: '#ffffff',
+    padding: 14,
+    borderRadius: 14,
+    marginBottom: 12,
+    shadowColor: '#4a5e39',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.13,
+    shadowRadius: 6,
+    elevation: 5,
   },
   commentHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
+    marginBottom: 6,
   },
   commentProfilePicture: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    marginRight: 8,
-    borderWidth: 1,
-    borderColor: '#6b8e23',
-  },
-  commentProfilePicturePlaceholder: {
-    marginRight: 8,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    marginRight: 10,
+    borderWidth: 2,
+    borderColor: '#7c9164',
   },
   commentUsername: {
-    fontWeight: 'bold',
-    fontSize: 14,
-    color: '#3b5323',
+    fontWeight: '600',
+    fontSize: 15,
+    color: '#2f3b24',
     flex: 1,
   },
   commentTimestamp: {
     fontSize: 12,
-    color: '#9e9e9e',
+    color: '#7f7f7f',
   },
   commentContent: {
-    fontSize: 14,
-    color: '#444',
-    marginLeft: 40,
+    fontSize: 15,
+    color: '#4a4a4a',
+    marginLeft: 44,
+    lineHeight: 22,
   },
-  addCommentContainer: {
-    backgroundColor: '#fff',
-    padding: 15,
-    margin: 15,
-    borderRadius: 12,
 
-    shadowColor: '#556b2f',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 5,
-    elevation: 4,
+  addCommentContainer: {
+    backgroundColor: '#ffffff',
+    padding: 18,
+    borderRadius: 16,
+    marginTop: 14,
+    marginBottom: 30,
+    shadowColor: '#2f3b24',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
+    elevation: 6,
   },
   commentInput: {
     borderWidth: 1,
     borderColor: '#cbd5b1',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 10,
-    backgroundColor: '#f6f9f3',
-    minHeight: 60,
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 12,
+    backgroundColor: '#f0f3eb',
+    minHeight: 70,
     textAlignVertical: 'top',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
   },
-
 });
-
-
 
 export default PostDetailScreen;
